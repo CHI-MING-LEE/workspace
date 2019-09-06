@@ -127,4 +127,7 @@ dask-work-space
 *.pth
 *.pl
 *.txt
+*.pt
+raw
+
 
