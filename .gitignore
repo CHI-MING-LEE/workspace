@@ -126,5 +126,5 @@ catboost_info
 dask-work-space
 *.pth
 *.pl
-
+*.txt
 
