@@ -117,7 +117,13 @@ venv.bak/
 *.JPG
 *.zip
 *.rar
+*.h5
+*.tmp
+*.dump
 
+# catboost
+catboost_info
+dask-work-space
 
 
 
