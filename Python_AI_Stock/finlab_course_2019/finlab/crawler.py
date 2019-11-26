@@ -1189,3 +1189,53 @@ def commit():
             #series.reset_index()\
             #    .pivot("date", "stock_id")[name].to_pickle(fitem + '.pkl')
             reshape_df[name].to_pickle(fitem + '.pkl')
+
+            
+def commit_single_table(table_name):
+    ftables = os.path.join('history', 'tables')
+    fitems = os.path.join('history', 'items')
+
+    fnames = [os.path.join(ftables, f) for f in os.listdir(ftables) if f[:-4] == table_name]  # 只更新一個table
+    tnames = [f[:-4] for f in os.listdir(ftables) if f[:-4] == table_name]
+
+    for fname, tname in zip(fnames, tnames):
+
+        if fname[-4:] != '.pkl':
+            continue
+
+        fdir = os.path.join(fitems, tname)
+        if os.path.isdir(fdir):
+            shutil.rmtree(fdir)
+
+        os.mkdir(fdir)
+
+        df = pd.read_pickle(fname)
+
+        # remove stock name
+        df = df.reset_index()
+        if sum(df['stock_id'].str.find(' ') >= 0) > 0:
+            df['stock_id'] = df['stock_id'].str.split(" ").str[0]
+        df = df.set_index(['stock_id', 'date'])
+
+        # select 4 digit stock ids
+        if tname == 'price':
+            sids = df.index.get_level_values(0)
+            df = df[sids.str.len() == 4]
+
+        if tname == 'monthly_revenue':
+            df = df.shift()
+
+        df = df.apply(lambda s: pd.to_numeric(s, errors='coerce'))
+
+        df[df == 0] = np.nan
+
+        df = df[~df.index.duplicated(keep='first')]
+
+        reshape_df = df.reset_index().pivot("date", "stock_id")
+
+        for name, series in df.items():
+            print(tname, '--', name)
+            fitem = os.path.join(fdir, name.replace('+', '_').replace('/', '_'))
+            # series.reset_index()\
+            #    .pivot("date", "stock_id")[name].to_pickle(fitem + '.pkl')
+            reshape_df[name].to_pickle(fitem + '.pkl')
