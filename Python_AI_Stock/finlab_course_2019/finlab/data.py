@@ -26,7 +26,7 @@ class Data():
             for item in items:
                 if item not in self.col2table:
                     self.col2table[item] = []
-                self.col2table[item].append(tname)
+                self.col2table[item].append(tname)  # {"item name": tname}
     
     def get(self, name, amount=0, table=None, convert_to_numeric=True):
         if table is None:
@@ -48,6 +48,9 @@ class Data():
         return df.loc[:self.date].iloc[-amount:]
 
     def talib(self, func_name, amount=0, **args):
+        """
+        計算各種candle pattern
+        """
         
         func = getattr(abstract, func_name)
 
