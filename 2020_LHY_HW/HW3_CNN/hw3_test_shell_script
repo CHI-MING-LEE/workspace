@@ -1,0 +1,4 @@
+#!/bin/bash
+echo 'downloading the model...'
+wget -c . https://github.com/CHI-MING-LEE/workspace/releases/download/v20.05.06.01/ResNet50_Scratch_Pre-trained_v1.model
+python3 test_script.py $1 $2
